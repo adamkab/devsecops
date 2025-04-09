@@ -43,10 +43,13 @@ pipeline {
   agent any
 
   environment {
+    K8S_TOKEN_ID= "K8S_TOKEN_ID"
+    K8S_URI= "https://10.0.32.27:6443"
+    K8S_NAMESPACE ="PFE2025"
     deploymentName = "devsecops"
     containerName = "devsecops-container"
     serviceName = "devsecops-svc"
-    imageName = "siddharth67/numeric-app:${GIT_COMMIT}"
+    imageName = "akabouri/numeric-app:${GIT_COMMIT}"
     applicationURL="http://devsecops-demo.eastus.cloudapp.azure.com"
     applicationURI="/increment/99"
   }
@@ -131,12 +134,16 @@ pipeline {
       steps {
         parallel(
           "Deployment": {
-            withKubeConfig([credentialsId: 'kubeconfig']) {
-              sh "bash k8s-deployment.sh"
+            withKubeConfig([credentialsId: "$K8S_TOKEN_ID", serverUrl: "$K8S_URI"]){
+              
+              sh "
+              kubectl create ns $K8S_NAMESPACE || true 
+              bash k8s-deployment.sh
+              "
             }
           },
           "Rollout Status": {
-            withKubeConfig([credentialsId: 'kubeconfig']) {
+            withKubeConfig([credentialsId: "$K8S_TOKEN_ID", serverUrl: "$K8S_URI"]){
               sh "bash k8s-deployment-rollout-status.sh"
             }
           }
@@ -148,12 +155,12 @@ pipeline {
       steps {
         script {
           try {
-            withKubeConfig([credentialsId: 'kubeconfig']) {
+            withKubeConfig([credentialsId: "$K8S_TOKEN_ID", serverUrl: "$K8S_URI"]) {
               sh "bash integration-test.sh"
             }
           } catch (e) {
-            withKubeConfig([credentialsId: 'kubeconfig']) {
-              sh "kubectl -n default rollout undo deploy ${deploymentName}"
+            withKubeConfig([credentialsId: "$K8S_TOKEN_ID", serverUrl: "$K8S_URI"]) {
+              sh "kubectl  -n $K8S_NAMESPACE rollout undo deploy ${deploymentName}"
             }
             throw e
           }
@@ -163,7 +170,7 @@ pipeline {
 
    stage('OWASP ZAP - DAST') {
       steps {
-        withKubeConfig([credentialsId: 'kubeconfig']) {
+        withKubeConfig([credentialsId: "$K8S_TOKEN_ID", serverUrl: "$K8S_URI"]) {
           sh 'bash zap.sh'
         }
       }
