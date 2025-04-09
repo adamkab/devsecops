@@ -136,10 +136,9 @@ pipeline {
           "Deployment": {
             withKubeConfig([credentialsId: "$K8S_TOKEN_ID", serverUrl: "$K8S_URI"]){
               
-              sh "
-              kubectl create ns $K8S_NAMESPACE || true 
-              bash k8s-deployment.sh
-              "
+              sh "kubectl create ns $K8S_NAMESPACE || true"
+               
+              sh "bash k8s-deployment.sh"
             }
           },
           "Rollout Status": {
