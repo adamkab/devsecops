@@ -97,7 +97,7 @@ pipeline {
         		sh "mvn dependency-check:check"
 			},
 			"Trivy Scan":{
-        sh "trivy image --security-checks vuln adoptopenjdk/openjdk8:alpine-slim"
+        sh "trivy image --security-checks vuln --timeout 100m adoptopenjdk/openjdk8:alpine-slim"
 				sh "bash trivy-docker-image-scan.sh"
 			} 	
       	)
