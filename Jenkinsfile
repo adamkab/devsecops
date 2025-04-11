@@ -103,13 +103,7 @@ pipeline {
                 },
                 "Trivy Scan": {
                   sh '''
-                     mkdir -p reports/trivy
-                    trivy image 
-                                --severity HIGH,CRITICAL \
-                                --timeout 100m \
-                                --format json \
-                                --output reports/trivy/trivy-report.json \
-                                postgres
+                     trivy image -q  --severity HIGH,CRITICAL --light postgres
                   '''
                 }
               )
