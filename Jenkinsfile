@@ -97,7 +97,7 @@ pipeline {
               parallel(
                 "Dependency Scan": {
                   sh '''
-                    
+                    mkdir -p reports/dependency-check
                     mvn dependency-check:check -Dformat=XML -DoutputDirectory=reports/dependency-check
                   '''
                 },
@@ -110,15 +110,11 @@ pipeline {
             }
           }
         }
-      stage('Publish HTML Reports') {
-        steps {
-          publishHTML(target: [
-            reportDir: 'reports/trivy',
-            reportFiles: 'trivy-report.html',
-            reportName: 'Trivy Report'
-          ])
+        stage('Archive Reports') {
+          steps {
+            archiveArtifacts artifacts: 'reports/**/*.json, reports/**/*.xml', allowEmptyArchive: true
+          }
         }
-      }
 
 
     
