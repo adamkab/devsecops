@@ -92,27 +92,29 @@ pipeline {
     // }
 
         stage('Vulnerability Scan - Docker') {
-          steps {
-            script {
-              parallel(
+    steps {
+        script {
+            parallel(
                 "Dependency Scan": {
-                  sh '''
-                    mkdir -p reports/dependency-check
-                    mvn dependency-check:check -Dformat=XML -DoutputDirectory=reports/dependency-check
-                  '''
+                    sh '''
+                        
+                        mvn dependency-check:check -Dformat=XML -DoutputDirectory=reports/dependency-check
+                    '''
                 },
                 "Trivy Scan": {
-                  sh '''
-                     trivy image -q --severity HIGH,CRITICAL  --light postgres
-                  '''
+                    sh '''
+                        
+               trivy image -q --severity HIGH,CRITICAL --light --format html -o reports/trivy-report.html postgres
+                    '''
                 }
-              )
-            }
-          }
+            )
         }
+    }
+}
+
         stage('Archive Reports') {
           steps {
-            archiveArtifacts artifacts: 'reports/**/*.json, reports/**/*.xml', allowEmptyArchive: true
+            archiveArtifacts artifacts: 'reports/**/*.html, reports/**/*.xml', allowEmptyArchive: true
           }
         }
 
