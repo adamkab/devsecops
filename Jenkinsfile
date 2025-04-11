@@ -91,18 +91,32 @@ pipeline {
       }
     }
 
-	stage('Vulnerability Scan - Docker') {
-      steps {
-        parallel(
-        	"Dependency Scan": {
-        		sh "mvn dependency-check:check"
-			},
-		    	"Trivy Scan":{
-				sh "bash trivy-docker-image-scan.sh"
-			} 	
-      	)
-      }
-    }
+        stage('Vulnerability Scan - Docker') {
+          steps {
+            script {
+              parallel(
+                "Dependency Scan": {
+                  sh '''
+                    mkdir -p reports/dependency-check
+                    mvn dependency-check:check -Dformat=XML -DoutputDirectory=reports/dependency-check
+                  '''
+                },
+                "Trivy Scan": {
+                  sh '''
+                    mkdir -p reports/trivy
+                    trivy image --security-checks vuln \
+                                --severity HIGH,CRITICAL \
+                                --timeout 100m \
+                                --format json \
+                                --output reports/trivy/trivy-report.json \
+                                postgres
+                  '''
+                }
+              )
+            }
+          }
+        }
+
     
 
     stage('Docker Build and Push') {
