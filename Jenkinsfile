@@ -97,13 +97,13 @@ pipeline {
               parallel(
                 "Dependency Scan": {
                   sh '''
-                    mkdir -p reports/dependency-check
+                    
                     mvn dependency-check:check -Dformat=XML -DoutputDirectory=reports/dependency-check
                   '''
                 },
                 "Trivy Scan": {
                   sh '''
-                    mkdir -p reports/trivy
+                    
                     trivy image --security-checks vuln \
                                 --severity HIGH,CRITICAL \
                                 --timeout 100m \
