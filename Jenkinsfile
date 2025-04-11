@@ -110,6 +110,16 @@ pipeline {
             }
           }
         }
+      stage('Publish HTML Reports') {
+        steps {
+          publishHTML(target: [
+            reportDir: 'reports/trivy',
+            reportFiles: 'trivy-report.html',
+            reportName: 'Trivy Report'
+          ])
+        }
+      }
+
 
     
 
