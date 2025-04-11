@@ -103,7 +103,7 @@ pipeline {
                 },
                 "Trivy Scan": {
                   sh '''
-                    
+                     mkdir -p reports/trivy
                     trivy image --security-checks vuln \
                                 --severity HIGH,CRITICAL \
                                 --timeout 100m \
