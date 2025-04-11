@@ -75,20 +75,21 @@ pipeline {
       }
     }
 
-    // stage('SonarQube - SAST') {
-    //   steps {
-    //     withSonarQubeEnv('SonarQube') {
-    //       sh "mvn sonar:sonar \
-		//               -Dsonar.projectKey=numeric-application \
-		//               -Dsonar.host.url=http://devsecops-demo.eastus.cloudapp.azure.com:9000"
-    //     }
-    //     timeout(time: 2, unit: 'MINUTES') {
-    //       script {
-    //         waitForQualityGate abortPipeline: true
-    //       }
-    //     }
-    //   }
-    // }
+    stage('SonarQube - SAST') {
+      steps {
+        withSonarQubeEnv('SonarQube') {
+          sh "mvn sonar:sonar \
+              -Dsonar.projectKey=numeric-app \
+              -Dsonar.host.url=http://code-quality-factory.s2m.ma:9000 \
+              -Dsonar.login=955651c85da6186a30c3d4d4be468aa09ffe1bee"
+        }
+        // timeout(time: 2, unit: 'MINUTES') {
+        //   script {
+        //     waitForQualityGate abortPipeline: true
+        //   }
+        // }
+      }
+    }
 
 	stage('Vulnerability Scan - Docker') {
       steps {
@@ -96,8 +97,7 @@ pipeline {
         	"Dependency Scan": {
         		sh "mvn dependency-check:check"
 			},
-			"Trivy Scan":{
-        sh "trivy image --security-checks vuln --timeout 100m adoptopenjdk/openjdk8:alpine-slim"
+		    	"Trivy Scan":{
 				sh "bash trivy-docker-image-scan.sh"
 			} 	
       	)
