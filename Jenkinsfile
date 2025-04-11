@@ -104,7 +104,7 @@ pipeline {
                 "Trivy Scan": {
                     sh '''
                         
-               trivy image -q --severity HIGH,CRITICAL --light --format html -o reports/trivy-report.html postgres
+               trivy image -q --severity HIGH,CRITICAL --light --format json -o reports/trivy-report.json postgres
                     '''
                 }
             )
@@ -114,7 +114,7 @@ pipeline {
 
         stage('Archive Reports') {
           steps {
-            archiveArtifacts artifacts: 'reports/**/*.html, reports/**/*.xml', allowEmptyArchive: true
+            archiveArtifacts artifacts: 'reports/**/*.json, reports/**/*.xml', allowEmptyArchive: true
           }
         }
 
