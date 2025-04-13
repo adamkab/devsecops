@@ -78,6 +78,7 @@ pipeline {
     // stage('SonarQube - SAST') {
     //   steps {
     //     withSonarQubeEnv('SonarQube') {
+    //       sh"export MAVEN_OPTS="--add-opens java.base/java.lang=ALL-UNNAMED""
     //       sh "mvn sonar:sonar \
     //           -Dsonar.projectKey=numeric-app \
     //           -Dsonar.host.url=http://code-quality-factory.s2m.ma:9000 \
@@ -96,9 +97,9 @@ pipeline {
         script {
             parallel(
                 "Dependency Scan": {
-                    sh '''
+                    sh '''/opt/dependency-check/bin/dependency-check.sh --scan . --format ALL --out /var/jenkins_home/workspace/PFE-test/reports/dependency-check
                         
-                        mvn dependency-check:check -Dformat=XML -DoutputDirectory=/var/jenkins_home/workspace/PFE-test/reports/dependency-check
+                        mvn dependency-check:check -Dformat=HTML -DoutputDirectory=/var/jenkins_home/workspace/PFE-test/reports/dependency-check
                     '''
                 },
                  "Trivy Scan": {
@@ -113,7 +114,7 @@ pipeline {
 
         stage('Archive Reports') {
           steps {
-            archiveArtifacts artifacts: 'reports/**/*.txt, reports/**/*.xml', allowEmptyArchive: true
+            archiveArtifacts artifacts: 'reports/**/*.txt, reports/**/*.html', allowEmptyArchive: true
           }
         }
 
