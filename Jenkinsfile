@@ -104,7 +104,7 @@ pipeline {
                  "Trivy Scan": {
                     sh '''
                         
-                   trivy image -q --severity HIGH,CRITICAL --light --format table -o reports/trivy postgres
+                   trivy image -q --severity HIGH,CRITICAL --light --format table -o reports/trivy/trivy-report.txt postgres
                     '''
                 }
             )
