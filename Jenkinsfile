@@ -104,7 +104,7 @@ pipeline {
                 },
                  "Trivy Scan": {
                     sh '''
-                   trivy image -q --severity HIGH,CRITICAL --light --format table -o /var/jenkins_home/workspace/PFE-test/reports/trivy/trivy-report.txt postgres
+                   trivy image -q --severity HIGH,CRITICAL --light --format table -o /var/jenkins_home/workspace/PFE-test/reports/trivy/trivy-report.html postgres
                     '''
                 }
             )
@@ -116,6 +116,7 @@ pipeline {
           steps {
             archiveArtifacts artifacts: 'reports/**/*.txt, reports/**/*.html', allowEmptyArchive: true
           }
+          
         }
 
 
