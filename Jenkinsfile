@@ -97,7 +97,7 @@ pipeline {
             parallel(
                 "Dependency Scan": {
                     sh '''
-                        
+                        /opt/dependency-check/bin/dependency-check.sh --scan . --format ALL --out reports/dependency-check
                         mvn dependency-check:check -Dformat=XML -DoutputDirectory=reports/dependency-check
                     '''
                 },
@@ -114,7 +114,7 @@ pipeline {
 
         stage('Archive Reports') {
           steps {
-            archiveArtifacts artifacts: 'reports/**/*.json, reports/**/*.xml', allowEmptyArchive: true
+            archiveArtifacts artifacts: 'reports/**/*.txt, reports/**/*.xml', allowEmptyArchive: true
           }
         }
 
