@@ -75,21 +75,21 @@ pipeline {
       }
     }
 
-    // stage('SonarQube - SAST') {
-    //   steps {
-    //     withSonarQubeEnv('SonarQube') {
-    //       sh "mvn sonar:sonar \
-    //           -Dsonar.projectKey=numeric-app \
-    //           -Dsonar.host.url=http://code-quality-factory.s2m.ma:9000 \
-    //           -Dsonar.login=955651c85da6186a30c3d4d4be468aa09ffe1bee"
-    //     }
-    //     // timeout(time: 2, unit: 'MINUTES') {
-    //     //   script {
-    //     //     waitForQualityGate abortPipeline: true
-    //     //   }
-    //     // }
-    //   }
-    // }
+    stage('SonarQube - SAST') {
+      steps {
+        withSonarQubeEnv('SonarQube') {
+          sh "mvn sonar:sonar \
+              -Dsonar.projectKey=numeric-app \
+              -Dsonar.host.url=http://code-quality-factory.s2m.ma:9000 \
+              -Dsonar.login=955651c85da6186a30c3d4d4be468aa09ffe1bee"
+        }
+        // timeout(time: 2, unit: 'MINUTES') {
+        //   script {
+        //     waitForQualityGate abortPipeline: true
+        //   }
+        // }
+      }
+    }
 
         stage('Vulnerability Scan - Docker') {
     steps {
@@ -104,7 +104,7 @@ pipeline {
                  "Trivy Scan": {
                     sh '''
                         
-                   trivy image -q --severity HIGH,CRITICAL --light --format json -o reports/trivy/trivy-report.json postgres
+                   trivy image -q --severity HIGH,CRITICAL --light --format table -o reports/trivy postgres
                     '''
                 }
             )
