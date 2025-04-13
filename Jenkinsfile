@@ -72,10 +72,9 @@ pipeline {
     stage('DAST') {
       steps {
         sh "docker run -v $(pwd):/zap/wrk/:rw \
-  -t ghcr.io/zaproxy/zaproxy:stable zap-full-scan.py \
-  -t https://ecom-gateway-dev.s2m.ma/mkit-server:8080 \
-  -r rapport.html
-"
+          -t ghcr.io/zaproxy/zaproxy:stable zap-full-scan.py \
+          -t https://ecom-gateway-dev.s2m.ma/mkit-server:8080 \
+          -r rapport.html"
       }
     }
 
