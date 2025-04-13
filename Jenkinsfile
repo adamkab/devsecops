@@ -69,9 +69,13 @@ pipeline {
       }
     }
 
-    stage('Mutation Tests - PIT') {
+    stage('DAST') {
       steps {
-        sh "mvn org.pitest:pitest-maven:mutationCoverage"
+        sh "docker run -v $(pwd):/zap/wrk/:rw \
+  -t ghcr.io/zaproxy/zaproxy:stable zap-full-scan.py \
+  -t https://ecom-gateway-dev.s2m.ma/mkit-server:8080 \
+  -r rapport.html
+"
       }
     }
 
@@ -104,7 +108,7 @@ pipeline {
                 },
                  "Trivy Scan": {
                     sh '''
-                   trivy image -q --severity HIGH,CRITICAL --light --format table -o /var/jenkins_home/workspace/PFE-test/reports/trivy/trivy-report.html postgres
+                   trivy image -q --severity HIGH,CRITICAL --light --format table -o /var/jenkins_home/workspace/PFE-test/reports/trivy/trivy-report.txt postgres
                     '''
                 }
             )
