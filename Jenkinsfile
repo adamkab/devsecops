@@ -97,13 +97,12 @@ pipeline {
             parallel(
                 "Dependency Scan": {
                     sh '''
-                        /opt/dependency-check/bin/dependency-check.sh --scan . --format ALL --out reports/dependency-check
+                        
                         mvn dependency-check:check -Dformat=XML -DoutputDirectory=reports/dependency-check
                     '''
                 },
                  "Trivy Scan": {
                     sh '''
-                        docker pull ghcr.io/zaproxy/zaproxy:stable
                    trivy image -q --severity HIGH,CRITICAL --light --format table -o reports/trivy/trivy-report.txt postgres
                     '''
                 }
