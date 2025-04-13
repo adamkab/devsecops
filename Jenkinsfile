@@ -104,7 +104,7 @@ pipeline {
                 },
                  "Trivy Scan": {
                     sh '''
-                   trivy image -q --severity HIGH,CRITICAL --light --format table -o /var/jenkins_home/workspace/PFE-test/reports/trivy postgres
+                   trivy image -q --severity HIGH,CRITICAL --light --format table -o /var/jenkins_home/workspace/PFE-test/reports/trivy/trivy-report.txt postgres
                     '''
                 }
             )
